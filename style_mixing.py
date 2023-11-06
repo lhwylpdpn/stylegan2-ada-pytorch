@@ -116,11 +116,13 @@ def generate_style_mix(
 def load_npz_file(npz_file):
     latent = np.load(npz_file)['w']
     latent = torch.from_numpy(latent)
-    print(latent.shape, latent.dtype)
+
     return latent
 
 if __name__ == "__main__":
     #generate_style_mix() # pylint: disable=no-value-for-parameter
-    test_path='out/projected_w.npz'
-    load_npz_file(test_path)
+    npz_dir='out'
+    npz_files = sorted([os.path.join(npz_dir, f) for f in os.listdir(npz_dir) if f.endswith('.npz')])
+    print(npz_files)
+    #load_npz_file(test_path)
 #----------------------------------------------------------------------------
