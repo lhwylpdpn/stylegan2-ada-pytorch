@@ -67,17 +67,36 @@ def generate_style_mix(
     os.makedirs(outdir, exist_ok=True)
 
     print('Generating W vectors...')
-    all_seeds = list(set(row_seeds + col_seeds))
-    all_z = np.stack([np.random.RandomState(seed).randn(G.z_dim) for seed in all_seeds])
-    all_w = G.mapping(torch.from_numpy(all_z).to(device), None)
-    w_avg = G.mapping.w_avg
-    all_w = w_avg + (all_w - w_avg) * truncation_psi
+
+    npz_dir = 'contect'
+    npz_contect = sorted([os.path.join(npz_dir, f) for f in os.listdir(npz_dir) if f.endswith('.npz')])
+    npz_dir = 'style'
+    npz_style = sorted([os.path.join(npz_dir, f) for f in os.listdir(npz_dir) if f.endswith('.npz')])
+
+    row_seeds=['contect'+str(i) for i in range(len(npz_contect))]
+    col_seeds=['style'+str(i) for i in range(len(npz_style))]
+
+
+    all_w = []
+    for npz_file in npz_contect+npz_style:
+        latent = load_npz_file(npz_file)
+        latent = w_avg + (latent - w_avg) * truncation_psi
+        all_w.append(latent)
+    all_w = torch.stack(all_w)
+
+    all_seeds = row_seeds + col_seeds
+    # all_z = np.stack([np.random.RandomState(seed).randn(G.z_dim) for seed in all_seeds])
+    # all_w = G.mapping(torch.from_numpy(all_z).to(device), None)
+    # w_avg = G.mapping.w_avg
+    # all_w = w_avg + (all_w - w_avg) * truncation_psi
     w_dict = {seed: w for seed, w in zip(all_seeds, list(all_w))}
 
     print('Generating images...')
     all_images = G.synthesis(all_w, noise_mode=noise_mode)
     all_images = (all_images.permute(0, 2, 3, 1) * 127.5 + 128).clamp(0, 255).to(torch.uint8).cpu().numpy()
-    image_dict = {(seed, seed): image for seed, image in zip(all_seeds, list(all_images))}
+    #image_dict = {(seed, seed): image for seed, image in zip(all_seeds, list(all_images))}
+    image_dict = {(i, i): image for i, image in enumerate(all_images)}
+
 
     print('Generating style-mixed images...')
     for row_seed in row_seeds:
@@ -120,9 +139,7 @@ def load_npz_file(npz_file):
     return latent
 
 if __name__ == "__main__":
-    #generate_style_mix() # pylint: disable=no-value-for-parameter
-    npz_dir='out'
-    npz_files = sorted([os.path.join(npz_dir, f) for f in os.listdir(npz_dir) if f.endswith('.npz')])
-    print(npz_files)
+    generate_style_mix() # pylint: disable=no-value-for-parameter
+
     #load_npz_file(test_path)
 #----------------------------------------------------------------------------
