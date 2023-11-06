@@ -78,6 +78,7 @@ def generate_style_mix(
 
 
     all_w = []
+    w_avg = G.mapping.w_avg
     for npz_file in npz_contect+npz_style:
         latent = load_npz_file(npz_file)
         latent = w_avg + (latent - w_avg) * truncation_psi
