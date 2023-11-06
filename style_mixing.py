@@ -149,7 +149,7 @@ def generate_style_mix(
 # Define the function to load npz files
 def load_npz_file(npz_file):
     latent = np.load(npz_file)['w']
-    latent = torch.from_numpy(latent).to('cuda')
+    #latent = torch.from_numpy(latent).to('cuda')
 
     return latent
 
