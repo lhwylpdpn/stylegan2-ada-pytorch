@@ -68,24 +68,26 @@ def generate_style_mix(
 
     print('Generating W vectors...')
 
-    # npz_dir = 'contect'
-    # npz_contect = sorted([os.path.join(npz_dir, f) for f in os.listdir(npz_dir) if f.endswith('.npz')])
-    # npz_dir = 'style'
-    # npz_style = sorted([os.path.join(npz_dir, f) for f in os.listdir(npz_dir) if f.endswith('.npz')])
-    #
-    # row_seeds=['contect'+str(i) for i in range(len(npz_contect))]
-    # col_seeds=['style'+str(i) for i in range(len(npz_style))]
-    #
-    #
-    # all_w = []
-    # w_avg = G.mapping.w_avg
-    # for npz_file in npz_contect+npz_style:
-    #     latent = load_npz_file(npz_file)
-    #     latent = w_avg + (latent - w_avg) * truncation_psi
-    #     all_w.append(latent)
-    # all_w = torch.stack(all_w)
-    # print(all_w.shape)
+    npz_dir = 'contect'
+    npz_contect = sorted([os.path.join(npz_dir, f) for f in os.listdir(npz_dir) if f.endswith('.npz')])
+    npz_dir = 'style'
+    npz_style = sorted([os.path.join(npz_dir, f) for f in os.listdir(npz_dir) if f.endswith('.npz')])
+
+    row_seeds=['contect'+str(i) for i in range(len(npz_contect))]
+    col_seeds=['style'+str(i) for i in range(len(npz_style))]
+
+
+    all_w = []
+    w_avg = G.mapping.w_avg
+    for npz_file in npz_contect+npz_style:
+        latent = load_npz_file(npz_file)
+        latent = w_avg + (latent - w_avg) * truncation_psi
+        all_w.append(latent)
+    all_w = torch.stack(all_w)
+    print(all_w.shape)
+
     all_seeds = row_seeds + col_seeds
+    all_seeds = list(set(row_seeds + col_seeds))
     all_z = np.stack([np.random.RandomState(seed).randn(G.z_dim) for seed in all_seeds])
     all_w = G.mapping(torch.from_numpy(all_z).to(device), None)
     w_avg = G.mapping.w_avg
