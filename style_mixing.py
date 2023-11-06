@@ -93,6 +93,8 @@ def generate_style_mix(
     w_avg = G.mapping.w_avg
     all_w = w_avg + (all_w - w_avg) * truncation_psi
     print(all_w.shape)
+    import time
+    time.sleep(100)
     w_dict = {seed: w for seed, w in zip(all_seeds, list(all_w))}
 
 
