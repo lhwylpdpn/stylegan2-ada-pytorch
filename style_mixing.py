@@ -121,6 +121,6 @@ def load_npz_file(npz_file):
 
 if __name__ == "__main__":
     #generate_style_mix() # pylint: disable=no-value-for-parameter
-    test_path='out/projectd_w.npz'
+    test_path='out/projected_w.npz'
     load_npz_file(test_path)
 #----------------------------------------------------------------------------
