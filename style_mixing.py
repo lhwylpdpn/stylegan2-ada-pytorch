@@ -112,7 +112,15 @@ def generate_style_mix(
 
 #----------------------------------------------------------------------------
 
-if __name__ == "__main__":
-    generate_style_mix() # pylint: disable=no-value-for-parameter
+# Define the function to load npz files
+def load_npz_file(npz_file):
+    latent = np.load(npz_file)['w']
+    latent = torch.from_numpy(latent)
+    print(latent.shape, latent.dtype)
+    return latent
 
+if __name__ == "__main__":
+    #generate_style_mix() # pylint: disable=no-value-for-parameter
+    test_path='out/projectd_w.npz'
+    load_npz_file(test_path)
 #----------------------------------------------------------------------------
