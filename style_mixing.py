@@ -94,7 +94,7 @@ def generate_style_mix(
     # all_w = w_avg + (all_w - w_avg) * truncation_psi
 
     all_seeds = row_seeds + col_seeds
-    print(load_npz_file(npz_file).shape)
+    print(load_npz_file(npz_file).shape,np.random.RandomState(88).randn(G.z_dim).shape)
     all_z = np.stack([load_npz_file(npz_file) for npz_file in npz_contect+npz_style])
     all_w = G.mapping(torch.from_numpy(all_z).to(device), None)
     w_avg = G.mapping.w_avg
