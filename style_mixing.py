@@ -91,9 +91,10 @@ def generate_style_mix(
     print([np.random.RandomState(seed).randn(G.z_dim) for seed in all_seeds][0].shape)
 
     all_z = np.stack([np.random.RandomState(seed).randn(G.z_dim) for seed in all_seeds])
-    # all_w = G.mapping(torch.from_numpy(all_z).to(device), None)
-    # w_avg = G.mapping.w_avg
-    # all_w = w_avg + (all_w - w_avg) * truncation_psi
+    all_w = G.mapping(torch.from_numpy(all_z).to(device), None)
+    print(all_w.shape)
+    w_avg = G.mapping.w_avg
+    all_w = w_avg + (all_w - w_avg) * truncation_psi
 
     #all_seeds = row_seeds + col_seeds
     print([load_npz_file(npz_file) for npz_file in npz_contect+npz_style][0].shape)
@@ -149,7 +150,8 @@ def generate_style_mix(
 # Define the function to load npz files
 def load_npz_file(npz_file):
     latent = np.load(npz_file)['w']
-    #latent = torch.from_numpy(latent).to('cuda')
+    print(latent.shape)
+    #latent = torch.from_numpy(latent)
 
     return latent
 
