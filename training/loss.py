@@ -71,6 +71,7 @@ class StyleGAN2Loss(Loss):
                 loss_Gmain = torch.nn.functional.softplus(-gen_logits) # -log(sigmoid(gen_logits))
                 training_stats.report('Loss/G/loss', loss_Gmain)
             with torch.autograd.profiler.record_function('Gmain_backward'):
+                torch.use_deterministic_algorithms(False)
                 loss_Gmain.mean().mul(gain).backward()
 
         # Gpl: Apply path length regularization.
@@ -89,6 +90,7 @@ class StyleGAN2Loss(Loss):
                 loss_Gpl = pl_penalty * self.pl_weight
                 training_stats.report('Loss/G/reg', loss_Gpl)
             with torch.autograd.profiler.record_function('Gpl_backward'):
+                torch.use_deterministic_algorithms(False)
                 (gen_img[:, 0, 0, 0] * 0 + loss_Gpl).mean().mul(gain).backward()
 
         # Dmain: Minimize logits for generated images.
@@ -101,6 +103,7 @@ class StyleGAN2Loss(Loss):
                 training_stats.report('Loss/signs/fake', gen_logits.sign())
                 loss_Dgen = torch.nn.functional.softplus(gen_logits) # -log(1 - sigmoid(gen_logits))
             with torch.autograd.profiler.record_function('Dgen_backward'):
+                torch.use_deterministic_algorithms(False)
                 loss_Dgen.mean().mul(gain).backward()
 
         # Dmain: Maximize logits for real images.
@@ -128,6 +131,7 @@ class StyleGAN2Loss(Loss):
                     training_stats.report('Loss/D/reg', loss_Dr1)
 
             with torch.autograd.profiler.record_function(name + '_backward'):
+                torch.use_deterministic_algorithms(False)
                 (real_logits * 0 + loss_Dreal + loss_Dr1).mean().mul(gain).backward()
 
 #----------------------------------------------------------------------------
